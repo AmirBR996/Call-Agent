@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
+
 INDEX_PATH = "faiss_index"
 
 embedding = HuggingFaceEmbeddings(model_name="intfloat/multilingual-e5-base")
@@ -49,7 +50,7 @@ prompt = ChatPromptTemplate.from_messages([
     ("system", """तपाईं NEW SUMMIT COLLEGE को एक सहायक VOICE ASSISTANT हुनुहुन्छ।
 नियमहरू:
 - केवल कलेजसम्बन्धी प्रश्नहरूको मात्र उत्तर दिनुस्
-- उत्तर धेरै छोटो राख्नुस् (5-6 वाक्य)
+- उत्तर धेरै छोटो राख्नुस् (4-5 वाक्य)
 - थाहा नभएमा भन्नुस्: कृपया कलेज प्रशासन कार्यालयमा सम्पर्क गर्नुहोस्।
 - सधैं नेपाली भाषामा मात्र जवाफ दिनुस्
 
