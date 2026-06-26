@@ -1,6 +1,12 @@
-python-dotenv
 fastapi
-langchain
-langchain-groq
-langchain-core
+uvicorn[standard]
 twilio
+edge-tts
+langchain-groq
+langchain-community
+langchain-huggingface
+langchain-core
+langchain-text-splitters
+faiss-cpu
+sentence-transformers
+python-dotenv
