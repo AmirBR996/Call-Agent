@@ -4,10 +4,9 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import PromptTemplate, ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 from langchain_core.messages import HumanMessage, AIMessage
-from langchain_community.memory import ConversationBufferWindowMemory
 from dotenv import load_dotenv
 import os
 
@@ -15,8 +14,9 @@ load_dotenv()
 
 INDEX_PATH = "faiss_index"
 
-embedding = HuggingFaceEmbeddings(model_name="intfloat/multilingual-e5-base")
-
+embedding = HuggingFaceEmbeddings(
+    model_name="intfloat/multilingual-e5-base"
+)
 
 if os.path.exists(INDEX_PATH):
     vector_store = FAISS.load_local(
@@ -40,40 +40,35 @@ retriever = vector_store.as_retriever(
 
 llm = ChatGroq(model="llama-3.3-70b-versatile")
 
-memory = ConversationBufferWindowMemory(
-    k=2,
-    memory_key="chat_history",
-    return_messages=True  
-)
+
+chat_history = []   
+MAX_HISTORY  = 5    
 
 prompt = ChatPromptTemplate.from_messages([
     ("system", """तपाईं NEW SUMMIT COLLEGE को एक सहायक VOICE ASSISTANT हुनुहुन्छ।
 नियमहरू:
 - केवल कलेजसम्बन्धी प्रश्नहरूको मात्र उत्तर दिनुस्
-- उत्तर धेरै छोटो राख्नुस् (4-5 वाक्य)
+- उत्तर धेरै छोटो राख्नुस् (5-6 वाक्य)
 - थाहा नभएमा भन्नुस्: कृपया कलेज प्रशासन कार्यालयमा सम्पर्क गर्नुहोस्।
 - सधैं नेपाली भाषामा मात्र जवाफ दिनुस्
 
 सन्दर्भ:
 {context}"""),
-
     MessagesPlaceholder(variable_name="chat_history"),
-
     ("human", "{question}"),
 ])
 
 def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
 
-def get_chat_history(_):
-    """Pull history from memory for injection into the prompt."""
-    return memory.load_memory_variables({})["chat_history"]
+def get_history(_):
+    return chat_history[-MAX_HISTORY * 2:] 
 
 chain = (
     {
         "context":      retriever | format_docs,
         "question":     RunnablePassthrough(),
-        "chat_history": RunnableLambda(get_chat_history),
+        "chat_history": RunnableLambda(get_history),
     }
     | prompt
     | llm
@@ -82,10 +77,7 @@ chain = (
 
 def chat(query: str) -> str:
     result = chain.invoke(query)
-    memory.save_context(
-        {"input": query},
-        {"output": result}
-    )
+    chat_history.append(HumanMessage(content=query))
+    chat_history.append(AIMessage(content=result))
 
     return result
-

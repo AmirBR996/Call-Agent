@@ -22,7 +22,6 @@ YOUR_DOMAIN = os.getenv("YOUR_DOMAIN")
 os.makedirs("/tmp/audio", exist_ok=True)
 app.mount("/audio", StaticFiles(directory="/tmp/audio"), name="audio")
 
-YOUR_DOMAIN = "https://f307-160-250-254-238.ngrok-free.app"
 
 STATIC_AUDIO = {}
 
