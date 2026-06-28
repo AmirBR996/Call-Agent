@@ -26,11 +26,11 @@ app.mount("/audio", StaticFiles(directory="/tmp/audio"), name="audio")
 STATIC_AUDIO = {}
 
 STATIC_PHRASES = {
-    "welcome":  "नमस्ते! Summit College मा स्वागत छ। कृपया आफ्नो प्रश्न सोध्नुहोस्।",
+    "welcome":  "नमस्ते!  New Summit College मा स्वागत छ। कृपया आफ्नो प्रश्न सोध्नुहोस्।",
     "fallback": "हामीले तपाईंको आवाज सुन्न सकेनौं। कृपया फेरि कल गर्नुहोस्।",
     "unclear":  "माफ गर्नुस्, मैले बुझिनँ। कृपया फेरि भन्नुहोस्।",
     "followup": "के तपाईंको अर्को प्रश्न छ?",
-    "bye":      "धन्यवाद! Summit College मा कल गर्नुभएकोमा धन्यवाद।",
+    "bye":      "धन्यवाद! New Summit College मा कल गर्नुभएकोमा धन्यवाद।",
 }
 
 
